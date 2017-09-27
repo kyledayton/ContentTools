@@ -368,9 +368,25 @@
 
         }
 
+        // An image URL is being/has been entered
+        &--inserting {
+
+            .ct-image-dialog__file-upload,
+            .ct-progress-bar,
+            .ct-control--rotate-ccw,
+            .ct-control--rotate-cw,
+            .ct-control--crop,
+            .ct-control--upload,
+            .ct-control--cancel,
+            .ct-control--clear {
+                display: none;
+            }
+        }
+
         // An image file is currently being uploaded to the server
         &--uploading {
 
+            .ct-image-dialog__input,
             .ct-control--rotate-ccw,
             .ct-control--rotate-cw,
             .ct-control--crop,
@@ -386,6 +402,7 @@
         // inserted into the page.
         &--populated {
 
+            .ct-image-dialog__input,
             .ct-progress-bar,
             .ct-control--upload,
             .ct-control--cancel {
@@ -393,7 +410,6 @@
             }
 
         }
-
     }
 
     .ct-image-dialog {
@@ -436,6 +452,22 @@
             opacity: 0;
             position: absolute;
             top: 0;
+        }
+
+        &__input {
+            border: none;
+            border-bottom: 1px solid #eee;
+            height: 32px;
+            line-height: 32px;
+            outline: none;
+            padding: 0 4px;
+            @include type-text;
+            vertical-align: top;
+            width: 456px;
+
+            &:focus {
+                border-bottom: 1px solid darken(#eee, 5%);
+            }
         }
     }
 

@@ -134,8 +134,19 @@ class ContentTools.ImageDialog extends ContentTools.DialogUI
 
         # Actions
         domActions = @constructor.createDiv(
-            ['ct-control-group', 'ct-control-group--right'])
+            ['ct-control-group'])
         @_domControls.appendChild(domActions)
+
+        # Image URL Input
+        @_domURLInput = document.createElement('input')
+        @_domURLInput.setAttribute('class', 'ct-image-dialog__input')
+        @_domURLInput.setAttribute('name', 'url')
+        @_domURLInput.setAttribute(
+            'placeholder',
+            ContentEdit._('Paste Image URL') + '...'
+            )
+        @_domURLInput.setAttribute('type', 'text')
+        domActions.appendChild(@_domURLInput)
 
         # Upload button
         @_domUpload = @constructor.createDiv([
@@ -228,6 +239,12 @@ class ContentTools.ImageDialog extends ContentTools.DialogUI
         # Mark the crop control as no longer active
         ContentEdit.removeCSSClass(@_domCrop, 'ct-control--active')
 
+    loadAndSave: (imageURL) ->
+        img = new Image()
+        img.onload = () =>
+            @save(imageURL, [img.width, img.height], null)
+        img.src = imageURL
+
     save: (imageURL, imageSize, imageAttrs) ->
         # Save and insert the current image
         @dispatchEvent(
@@ -271,6 +288,7 @@ class ContentTools.ImageDialog extends ContentTools.DialogUI
         @_domCancelUpload = null
         @_domClear = null
         @_domCrop = null
+        @_domURLInput = null
         @_domInput = null
         @_domInsert = null
         @_domProgress = null
@@ -336,7 +354,17 @@ class ContentTools.ImageDialog extends ContentTools.DialogUI
                 @addCropMarks()
 
         @_domInsert.addEventListener 'click', (ev) =>
-            @dispatchEvent(@createEvent('imageuploader.save'))
+            if @state() == 'inserting'
+                @loadAndSave(@_imageURL)
+            else
+                @dispatchEvent(@createEvent('imageuploader.save'))
+
+        @_domURLInput.addEventListener 'input', (ev) =>
+            @_imageURL = ev.target.value
+            if ev.target.value  != ''
+                @state('inserting')
+            else
+                @state('empty')
 
 
 class CropMarksUI extends ContentTools.AnchoredComponentUI
